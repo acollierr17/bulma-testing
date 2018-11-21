@@ -1,0 +1,13 @@
+$ff: 'Open Sans';
+$primary: #dd9323;
+
+@import '../../../node_modules/bulma/css/bulma.css';
+
+body {
+    font-family: $ff;
+    padding: 30px;
+}
+
+.is-primary {
+    background-color: $primary !important;
+}
