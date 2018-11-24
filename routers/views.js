@@ -11,6 +11,11 @@ router.get('/', (req, res, next) => {
         avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`
     });
 
+    res.render('contact.html', {
+        data: resData(req.user || false),
+        avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`
+    });
+
 });
 
 function checkAuth(req, res, next) {
