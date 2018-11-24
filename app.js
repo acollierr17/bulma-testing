@@ -3,11 +3,13 @@ const passport = require('passport');
 const session = require('express-session');
 const path = require('path');
 const app = express();
+const uuid = require('uuid');
+const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
-require('dotenv-flow');
+require('dotenv-flow').config();
 
 const dbOptions = {
     useNewUrlParser: true,
@@ -19,15 +21,23 @@ const dbOptions = {
     family: 4
 };
 
-mongoose.connect(`mongodb://localhost/bulma-db`, dbOptions);
+mongoose.connect(process.env.MONGO_URI, dbOptions);
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 
 app.use(session({
-    secret: 'goneapeshityandhi',
+    genid: (req) => {
+        return uuid();
+    },
+    name: process.env.SNAME,
+    secret: process.env.SSECRET,
     resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({ mongooseConnection: db })
+    saveUninitialized: true,
+    store: new MongoStore({ mongooseConnection: db }),
+    cookie: {
+        secure: true,
+        httpOnly: true
+    }
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -35,10 +45,6 @@ app.use(passport.session());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-app.use(express.static(path.join(__dirname, 'public'), {
-    extensions: ['html', 'htm']
-}));
-app.use('/public/includes', express.static(path.join(__dirname, '/public/includes')))
 app.use('/public/assets/css', express.static(path.join(__dirname, '/public/assets/css')));
 app.use('/public/assets/js', express.static(path.join(__dirname, '/public/assets/js')));
 app.use('/public/assets/img', express.static(path.join(__dirname, '/public/assets/img')));
@@ -46,7 +52,8 @@ app.use('/node_modules/bulma/css', express.static(path.join(__dirname, '/node_mo
 app.set('views', path.join(__dirname, '/views'));
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
-app.use('/', require('./routers/discord'));
+app.use('/', require('./routers').Views);
+app.use('/', require('./routers').Discord);
 
 app.use((err, req, res, next) => {
     switch (err.message) {
@@ -63,7 +70,9 @@ app.use((err, req, res, next) => {
     }
 });
 
-app.listen(5000, (err) => {
+app.use(helmet());
+
+app.listen(process.env.PORT, (err) => {
     if (err) return console.log(err);
-    console.info('Listening on port 5000!');
+    console.info(`Success! Listening at ${process.env.PORT}`);
 });

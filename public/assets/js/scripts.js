@@ -61,5 +61,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // the reason I need to set a timeout is because the DOM isn't fully loaded
     // will probably find out a more efficient way of doing this(?)
-    setTimeout(handleNavBar, 1000);
+    setTimeout(handleNavBar, 100);
 });

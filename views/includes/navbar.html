@@ -13,31 +13,26 @@
 
     <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-            <a class="navbar-item">
+            <a class="navbar-item" href="/">
                 Home
             </a>
-
-            <a class="navbar-item">
-                Documentation
-            </a>
-
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">
                     More
                 </a>
 
                 <div class="navbar-dropdown">
-                    <a class="navbar-item">
-                        About
-                    </a>
-                    <a class="navbar-item">
-                        Jobs
-                    </a>
                     <a class="navbar-item" href="/contact">
                         Contact
                     </a>
-                    <hr class="navbar-divider">
                     <a class="navbar-item">
+                        Terms of Service
+                    </a>
+                    <a class="navbar-item">
+                        Privacy Policy
+                    </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item" href="https://github.com/acollierr17/bulma-learning/issues">
                         Report an issue
                     </a>
                 </div>
@@ -46,15 +41,27 @@
 
         <div class="navbar-end">
             <div class="navbar-item">
-                <div class="buttons">
-                    <a class="button is-primary" href="/login">
-                        <strong>Log in through Discord</strong>
-                    </a>
-                    <a class="button is-light" href="/logout">
-                        Logout
-                    </a>
-                </div>
+
+                <% if (!data.username) { %>
+                    <div class="buttons">
+                        <a class="button is-primary" href="/login">
+                            <strong><i class="fab fa-discord"></i> Login</strong>
+                        </a>
+                    </div>
+                <% } else { %>
+                    <div class="buttons">
+                        <a href="/profile" class="button is-primary">
+                            Profile
+                        </a>
+                        <a class="button is-light" href="/logout">
+                            Logout
+                        </a>
+                    </div>
+                <% } %>
             </div>
         </div>
     </div>
 </nav>
+<script>
+    
+</script>

@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <div include-html="includes/navbar.html"></div>
+    <% include includes/navbar.html %>
 
     <section class="section">
         <div class="container">
@@ -85,15 +85,15 @@
             <div class="control">
                 <button class="button is-link" onclick="submitForm()">Submit</button>
             </div>
-            <!-- <div class="control">
+            <div class="control">
                 <button class="button is-text" onclick="cancelForm()">Cancel</button>
-            </div> -->
+            </div>
         </div>
 
     </section>
 
     <footer>
-        <div include-html="includes/footer.html"></div>
+        <% include includes/footer.html %>
     </footer>
     <script src="/public/assets/js/scripts.js"></script>
     <script>

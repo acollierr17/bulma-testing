@@ -56,24 +56,26 @@ router.get('/logout', (req, res, next) => {
 
 router.get('/profile', checkAuth, (req, res, next) => {
 
-    let data = {
-        id: req.user.id,
-        username: req.user.username,
-        discriminator: req.user.discriminator,
-        avatar: req.user.avatar,
-        verified: req.user.verified,
-        guildSize: req.user.guilds.length
-    };
-
     res.render('profile.html', { 
-        data: data,
+        data: resData(req.user),
         avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`
     });
 });
 
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
-    res.send('not logged in :(');
+    res.redirect('/?authorized=false');
+}
+
+function resData(user) {
+    return data = {
+        id: user.id,
+        username: user.username,
+        discriminator: user.discriminator,
+        avatar: user.avatar,
+        verified: user.verified,
+        guilds: user.guilds
+    };
 }
 
 module.exports = router;
