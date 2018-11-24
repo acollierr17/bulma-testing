@@ -21,6 +21,7 @@
             </h1>
             <p class="subtitle">
                 Need to contact us about something? Don't hesitate to submit a form below!
+                <p><em>Currently under construction.</em></p>
             </p>
         </div>
     </section>
@@ -29,14 +30,14 @@
         <div class="field">
             <label class="label">Name</label>
             <div class="control">
-                <input class="input" type="text" placeholder="John Doe" id="myName">
+                <input class="input" type="text" placeholder="John Doe" id="myName" disabled>
             </div>
         </div>
 
         <div class="field">
             <label class="label">Username</label>
             <div class="control has-icons-left has-icons-right">
-                <input class="input is-success" type="text" placeholder="johndoe" id="myUsername">
+                <input class="input is-success" type="text" placeholder="johndoe" id="myUsername" disabled>
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
                 </span>
@@ -50,7 +51,7 @@
         <div class="field">
             <label class="label">Email</label>
             <div class="control has-icons-left has-icons-right">
-                <input class="input is-danger" type="email" placeholder="john.doe@example.com" id="myEmail">
+                <input class="input is-danger" type="email" placeholder="john.doe@example.com" id="myEmail" disabled>
                 <span class="icon is-small is-left">
                     <i class="fas fa-envelope"></i>
                 </span>
@@ -65,7 +66,7 @@
             <label class="label">Subject</label>
             <div class="control">
                 <div class="select">
-                    <select id="mySubject">
+                    <select id="mySubject" disabled>
                         <option>Video Idea</option>
                         <option>Business Inquery</option>
                         <option>Miscellaneous</option>
@@ -77,16 +78,16 @@
         <div class="field">
             <label class="label">Message</label>
             <div class="control">
-                <textarea class="textarea" placeholder="What do you wish to say?" id="myMessage"></textarea>
+                <textarea class="textarea" placeholder="What do you wish to say?" id="myMessage" disabled></textarea>
             </div>
         </div>
 
         <div class="field is-grouped">
             <div class="control">
-                <button class="button is-link" onclick="submitForm()">Submit</button>
+                <button class="button is-link" onclick="submitForm()" disabled>Submit</button>
             </div>
             <div class="control">
-                <button class="button is-text" onclick="cancelForm()">Cancel</button>
+                <button class="button is-text" onclick="cancelForm()" disabled>Cancel</button>
             </div>
         </div>
 
