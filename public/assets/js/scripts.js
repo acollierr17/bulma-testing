@@ -63,3 +63,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // will probably find out a more efficient way of doing this(?)
     setTimeout(handleNavBar, 100);
 });
+
+function openTab(evt, tabName) {
+    let i, x, tabLinks;
+
+    x = document.querySelectorAll('.content-tab');
+    for (i = 0; i < x.length; i++) x[i].style.display = "none";
+
+    tabLinks = document.querySelectorAll('.tab');
+    for (i = 0; i < x.length; i++) tabLinks[i].className = tabLinks[i].className.replace(' is-active', '');
+
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += ' is-active';
+}

@@ -11,3 +11,11 @@ body {
 .is-primary {
     background-color: $primary !important;
 }
+
+section {
+  margin-bottom: 1.5rem !important;
+}
+
+.media-content {
+  overflow-x: inherit !important;
+}

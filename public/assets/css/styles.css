@@ -8,4 +8,12 @@ body {
   background-color: #dd9323 !important;
 }
 
+section {
+  margin-bottom: 1.5rem !important;
+}
+
+.media-content {
+  overflow-x: inherit !important;
+}
+
 /*# sourceMappingURL=styles.css.map */
