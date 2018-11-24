@@ -34,11 +34,14 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     store: new MongoStore({ mongooseConnection: db }),
-    cookie: {
-        secure: true,
-        httpOnly: true
-    }
+    // cookie: {
+    //     path: '/',
+    //     secure: true,
+    //     httpOnly: true,
+    //     maxAge: 60000000
+    // }
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
