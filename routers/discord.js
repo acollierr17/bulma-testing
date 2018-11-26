@@ -1,8 +1,9 @@
 const express = require('express');
-const path = require('path');
 const passport = require('passport');
 const refresh = require('passport-oauth2-refresh');
-const DiscordStrategy = require('passport-discord').Strategy;
+const {
+    Strategy
+} = require('passport-discord');
 require('dotenv-flow').config();
 
 const router = express.Router();
@@ -17,7 +18,7 @@ passport.deserializeUser((obj, done) => {
 
 let scopes = ['identify', 'guilds'];
 
-let strat = new DiscordStrategy({
+let discord = new Strategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     callbackURL: process.env.CALLBACK_URL,
@@ -27,16 +28,16 @@ let strat = new DiscordStrategy({
     profile.accessToken = accessToken;
     profile.refreshToken = refreshToken;
 
-    process.nextTick(function() {
+    process.nextTick(function () {
         return cb(null, profile);
     });
 });
 
-passport.use(strat);
-refresh.use(strat);
+passport.use(discord);
+refresh.use(discord);
 
-router.get('/login', passport.authenticate('discord', { 
-    scope: scopes 
+router.get('/login', passport.authenticate('discord', {
+    scope: scopes
 }), (req, res) => {});
 
 router.get('/callback', passport.authenticate('discord', {
@@ -46,7 +47,9 @@ router.get('/callback', passport.authenticate('discord', {
 });
 
 router.get('/auth', checkAuth, (req, res, next) => {
-    res.sendFile(path.join(__dirname, '../views/auth.html'));
+    res.render('auth', {
+        title: 'Authenticated'
+    })
 });
 
 router.get('/logout', (req, res, next) => {
@@ -56,7 +59,8 @@ router.get('/logout', (req, res, next) => {
 
 router.get('/profile', checkAuth, (req, res, next) => {
 
-    res.render('profile.html', { 
+    res.render('profile', {
+        title: resData(req.user).username,
         data: resData(req.user),
         avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`
     });

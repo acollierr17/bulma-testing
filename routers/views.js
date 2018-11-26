@@ -1,19 +1,20 @@
 const express = require('express');
-const path = require('path');
 require('dotenv-flow').config();
 
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
 
-    res.render('index.html', {
+    res.render('index', {
+        title: 'Bulma Testing',
         data: resData(req.user || false),
         avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`
     });
 });
 
 router.get('/contact', (req, res, next) => {
-    res.render('contact.html', {
+    res.render('contact', {
+        title: 'Contact',
         data: resData(req.user || false),
         avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`
     });

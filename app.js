@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const ejsLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const path = require('path');
 const app = express();
@@ -9,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
+const { Views, Discord } = require('./routers');
 require('dotenv-flow').config();
 
 const dbOptions = {
@@ -20,6 +22,8 @@ const dbOptions = {
     connectTimeoutMS: 10000,
     family: 4
 };
+
+app.use(helmet());
 
 mongoose.connect(process.env.MONGO_URI, dbOptions);
 mongoose.Promise = global.Promise;
@@ -33,30 +37,24 @@ app.use(session({
     secret: process.env.SSECRET,
     resave: false,
     saveUninitialized: true,
-    store: new MongoStore({ mongooseConnection: db }),
-    // cookie: {
-    //     path: '/',
-    //     secure: true,
-    //     httpOnly: true,
-    //     maxAge: 60000000
-    // }
+    store: new MongoStore({ mongooseConnection: db })
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.set('view engine', 'ejs');
+app.use(ejsLayouts);
+app.set('layout', 'includes/main');;
+
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/public/assets/css', express.static(path.join(__dirname, '/public/assets/css')));
-app.use('/public/assets/js', express.static(path.join(__dirname, '/public/assets/js')));
-app.use('/public/assets/img', express.static(path.join(__dirname, '/public/assets/img')));
-app.use('/node_modules/bulma/css', express.static(path.join(__dirname, '/node_modules/bulma/css')));
+app.use('/public', express.static(path.join(__dirname, '/public')));
 app.set('views', path.join(__dirname, '/views'));
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
-app.use('/', require('./routers').Views);
-app.use('/', require('./routers').Discord);
+app.use('/', Views);
+app.use('/', Discord);
 
 app.use((err, req, res, next) => {
     switch (err.message) {
@@ -72,8 +70,6 @@ app.use((err, req, res, next) => {
             });
     }
 });
-
-app.use(helmet());
 
 app.listen(process.env.PORT, (err) => {
     if (err) return console.log(err);

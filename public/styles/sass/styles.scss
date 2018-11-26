@@ -1,7 +1,8 @@
 $ff: 'Open Sans';
 $primary: #dd9323;
 
-@import '../../../node_modules/bulma/css/bulma.css';
+@charset 'utf-8';
+@import '../../../node_modules/bulma/bulma.sass';
 
 body {
     font-family: $ff;
