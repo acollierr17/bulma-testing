@@ -20,3 +20,14 @@ section {
 .media-content {
   overflow-x: inherit !important;
 }
+
+ul, .profile-bot-manage {
+  list-style: none;
+  padding-left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+li, .profile-bot-manage {
+  display: inline;
+}

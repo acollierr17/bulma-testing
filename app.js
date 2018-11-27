@@ -11,7 +11,10 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
 const { Views, Discord } = require('./routers');
+const { Client } = require('discord.js');
 require('dotenv-flow').config();
+
+module.exports = (client) = new Client({ disableEveryone: true });
 
 const dbOptions = {
     useNewUrlParser: true,
@@ -74,4 +77,42 @@ app.use((err, req, res, next) => {
 app.listen(process.env.PORT, (err) => {
     if (err) return console.log(err);
     console.info(`Success! Listening at ${process.env.PORT}`);
+});
+
+// bot stuff
+const prefix = '^';
+
+client
+    .on('ready', async () => {
+        console.log(`${client.user.tag} (${client.user.id}) is logged into ${client.guilds.size} server(s).`);
+
+        client.appInfo = await client.fetchApplication();
+        setInterval(async () => {
+            client.appInfo = await client.fetchApplication();
+        }, 60000);
+
+    })
+    .on('message', async message => {
+        
+        if (message.author.bot) return;
+        if (message.content.indexOf(prefix) !== 0) return;
+
+        const args = message.content.slice(prefix.length).trim().split(/ +/g);
+        const command = args.shift().toLowerCase();
+
+        switch (command) {
+            case 'ping':
+                message.channel.send('Pong!');
+                break;
+            default:
+        }
+    })
+    .on('error', () => console.error)
+    .on('disconnect', () => console.log('Reconnecting...'))
+    .on('reconnecting', () => console.log('Lost connection! Reconnecting...'))
+    .on('warn', () => console.warn)
+    .login()
+
+process.on('unhandledRejection', error => {
+    console.log(`Unhandled Rejection: ${error}`);
 });

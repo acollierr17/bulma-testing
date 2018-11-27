@@ -1,9 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const refresh = require('passport-oauth2-refresh');
-const {
-    Strategy
-} = require('passport-discord');
+const { Strategy } = require('passport-discord');
 require('dotenv-flow').config();
 
 const router = express.Router();
@@ -16,7 +14,7 @@ passport.deserializeUser((obj, done) => {
     done(null, obj);
 });
 
-let scopes = ['identify', 'guilds'];
+const scopes = ['identify', 'guilds'];
 
 let discord = new Strategy({
     clientID: process.env.CLIENT_ID,
@@ -62,9 +60,14 @@ router.get('/profile', checkAuth, (req, res, next) => {
     res.render('profile', {
         title: resData(req.user).username,
         data: resData(req.user),
-        avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`
+        avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`,
+        client
     });
 });
+
+// router.get('/beta', (req, res, next) => {
+//     console.log(client.channels.size);
+// });
 
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
