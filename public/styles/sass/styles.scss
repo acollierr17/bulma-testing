@@ -6,7 +6,6 @@ $primary: #dd9323;
 
 body {
     font-family: $ff;
-    padding: 30px;
 }
 
 .is-primary {
@@ -30,4 +29,8 @@ ul, .profile-bot-manage {
 
 li, .profile-bot-manage {
   display: inline;
+}
+
+#contactForm {
+  padding: 15px;
 }

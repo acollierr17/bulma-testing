@@ -43,25 +43,22 @@
             <div class="navbar-item">
 
                 <% if (!data.username) { %>
-                    <div class="buttons">
-                        <a class="button is-primary" href="/login">
-                            <strong><i class="fab fa-discord"></i> Login</strong>
-                        </a>
-                    </div>
+                <div class="buttons">
+                    <a class="button is-primary" href="/login">
+                        <strong><i class="fab fa-discord"></i> Login</strong>
+                    </a>
+                </div>
                 <% } else { %>
-                    <div class="buttons">
-                        <a href="/profile" class="button is-primary">
-                            Profile
-                        </a>
-                        <a class="button is-light" href="/logout">
-                            Logout
-                        </a>
-                    </div>
+                <div class="buttons">
+                    <a href="/profile" class="button is-primary">
+                        Profile
+                    </a>
+                    <a class="button is-light" href="/logout">
+                        Logout
+                    </a>
+                </div>
                 <% } %>
             </div>
         </div>
     </div>
 </nav>
-<script>
-    
-</script>

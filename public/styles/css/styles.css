@@ -6747,8 +6747,7 @@ label.panel-block {
   padding: 3rem 1.5rem 6rem; }
 
 body {
-  font-family: "Open Sans";
-  padding: 30px; }
+  font-family: "Open Sans"; }
 
 .is-primary {
   background-color: #dd9323 !important; }
@@ -6767,3 +6766,6 @@ ul, .profile-bot-manage {
 
 li, .profile-bot-manage {
   display: inline; }
+
+#contactForm {
+  padding: 15px; }

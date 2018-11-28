@@ -11,7 +11,6 @@
     </div>
 </section>
 <section>
-
     <div class="card">
         <div class="card-content">
             <div class="media">
@@ -22,7 +21,8 @@
                 </div>
                 <div class="media-content">
                     <p class="title is-4">
-                        <%= data.username %>#<%= data.discriminator %>
+                        <%= data.username %>#
+                        <%= data.discriminator %>
                     </p>
                     <p class="subtitle is-6"><strong>ID: </strong>
                         <%= data.id %>
@@ -43,27 +43,30 @@
 </section>
 
 <section>
-
     <div class="tabs is-left">
         <ul>
             <li class="tab is-active" onclick="openTab(event, 'Guilds')"><a>Guilds</a></li>
-            <li class="tab" onclick="openTab(event, 'Friends')"><a>Friends</a></li>
-            <li class="tab"><a>Placeholder #2</a></li>
-            <li class="tab"><a>Placeholder #3</a></li>
+            <% if (data.id === client.appInfo.owner.id) { %>
+            <li class="tab" onclick="openTab(event, 'Messaging')"><a>Messaging</a></li>
+            <% } %>
+            <li class="tab" onclick="openTab(event, 'Embed Sender')"><a>Embed Sender</a></li>
+            <li class="tab" onclick="openTab(event, 'Embed Editor')"><a>Embed Editor</a></li>
         </ul>
     </div>
 
     <div class="container section">
         <div class="content-tab" id="Guilds">
-
-            <% client.guilds.forEach(g => { %>
-
+            <% data.guilds.forEach(g => {
+                const permsOnGuild = new perms(g.permissions);
+                if (!permsOnGuild.has('MANAGE_GUILD')) return;
+            %>
             <div class="card">
                 <div class="card-content">
                     <div class="media">
                         <div class="media-left">
                             <figure class="image is-72x72">
-                                <img class="is-rounded guild-icon-profile" src="https://cdn.discordapp.com/icons/<%= g.id %>/<%= g.icon%>.png" alt="<%= g.name %>'s guild icon">
+                                <img class="is-rounded guild-icon-profile" src="https://cdn.discordapp.com/icons/<%= g.id %>/<%= g.icon%>.png"
+                                    alt="<%= g.name %>'s guild icon">
                             </figure>
                         </div>
                         <div class="media-content">
@@ -71,38 +74,179 @@
                                 <%= g.name %>
                             </p>
                             <p class="subtitle is-6">
-                                <strong>Guild Owner: </strong><%= g.owner.user.tag %> (<%= g.owner.id %>)
+                                <% /* %>
+                                <strong>Guild Owner: </strong>
+                                <%= g.owner.user.tag %> (
+                                <%= g.owner.id %>)
                                 <br />
-                                <strong>Member Count: </strong><%= g.memberCount %>
+                                <strong>Member Count: </strong>
+                                <%= g.memberCount %>
                                 <br />
-                                <strong>Channel Count: </strong><%= g.channels.size %>
-                                <br />
+                                <strong>Channel Count: </strong>
+                                <%= g.channels.size %> -->
+                                <% */ %>
+
                                 <ul class="profile-bot-manage">
-                                    <% if (data.id === client.appInfo.owner.id) { %>
-                                        <li><a href="" class="button is-primary">Manage Server</a></li>
-                                    <% } else { %>
-                                        <li><a class="button is-primary" title="Missing permissions" id="manage-server-disabled" disabled>Manage Server</a></li>
-                                    <% } %>
-                                    <li><a href="" class="button is-link">Remove Bot</a></li>
+
+                                    <!-- <li><a class="button is-primary">Manage Server</a></li>
+                                    <li><a class="button is-link">Remove Bot</a></li> -->
+
+                                    <%
+                                    let href, text;
+                                    let enabled;
+
+                                    if (client.guilds.get(g.id)) {
+                                        href = `/manage/${g.id}`;
+                                        text = 'Manage Server';
+                                        enabled = true;
+                                    } else {
+                                        href = `https://discordapp.com/oauth2/authorize?client_id=${client.appInfo.id}&scope=bot&guild_id=${g.id}&response_type=code&redirect_uri=${encodeURIComponent(process.env.CALLBACK_URL)}`;
+                                        text = 'Invite Bot';
+                                        enabled = client.appInfo.botPublic;
+                                    }
+                                    %>
+                                    <li><a href="<%= href %>" class="button is-primary">
+                                            <%= text %></a></li>
                                 </ul>
                             </p>
                         </div>
                     </div>
                 </div>
-
-
-
             </div>
-
             <% }); %>
         </div>
-        <div class="content-tab" id="Friends" style="display:none;">
-            <ul>
-                <li>1</li>
-                <li>2</li>
-                <li>3</li>
-            </ul>
+        <div class="content-tab" id="Messaging" style="display:none;">
+            <form id="sendMessageForm">
+                <div class="field">
+                    <label class="label">Channel</label>
+                    <div class="control">
+                        <div class="select">
+                            <select name="channel">
+                                <%= sorted = client.channels.sort((a, b) => a.position - b.position); %>
+                                <% sorted.forEach(c => { %>
+
+                                <% if (c.type !== 'text') return; %>
+                                <% if (c.permissionsFor(client.user).missing(['VIEW_CHANNEL', 'SEND_MESSAGES']).length) return; %>
+
+                                <option>
+                                    <%= c.name %>
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Message</label>
+                    <div class="control">
+                        <textarea class="textarea" placeholder="Welcome to Bulma Testing..." name="message"></textarea>
+                    </div>
+                    <!-- <p class="help is-danger" style="display:none;">Please insert a message!</p> -->
+                </div>
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-link is-primary">Submit</button>
+                    </div>
+                    <div class="control">
+                        <button class="button is-text" onclick="clearForm(this)" id="cancelMessage" disabled>Reset</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="content-tab" id="Embed Sender" style="display:none;">
+
+            <form id="sendEmbedForm">
+                <div class="field">
+                    <label class="label">Channel</label>
+                    <div class="control">
+                        <div class="select">
+                            <select name="channel">
+                                <%= sorted = client.channels.sort((a, b) => a.position - b.position); %>
+                                <% sorted.forEach(c => { %>
+
+                                <% if (c.type !== 'text') return; %>
+                                <% if (c.permissionsFor(client.user).missing(['VIEW_CHANNEL', 'SEND_MESSAGES']).length) return; %>
+
+                                <option>
+                                    <%= c.name %>
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Message</label>
+                    <div class="control">
+                        <textarea class="textarea" placeholder="Welcome to Bulma Testing..." name="message"></textarea>
+                    </div>
+                    <!-- <p class="help is-danger" style="display:none;">Please insert a message!</p> -->
+                </div>
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-link is-primary">Submit</button>
+                    </div>
+                    <div class="control">
+                        <button class="button is-text" onclick="clearForm(this)" id="cancelMessage" disabled>Reset</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="content-tab" id="Embed Editor" style="display:none;">
+
+            <form id="editEmbed">
+                <div class="field">
+                    <label class="label">Channel</label>
+                    <div class="control">
+                        <div class="select">
+                            <select name="channel">
+                                <%= sorted = client.channels.sort((a, b) => a.position - b.position); %>
+                                <% sorted.forEach(c => { %>
+
+                                <% if (c.type !== 'text') return; %>
+                                <% if (c.permissionsFor(client.user).missing(['VIEW_CHANNEL', 'SEND_MESSAGES']).length) return; %>
+
+                                <option>
+                                    <%= c.name %>
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Message ID</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="ex: 517199167592988672" name="id">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Message</label>
+                    <div class="control">
+                        <textarea class="textarea" placeholder="Welcome to Bulma Testing..." name="message"></textarea>
+                    </div>
+                    <!-- <p class="help is-danger" style="display:none;">Please insert a message!</p> -->
+                </div>
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-link is-primary">Submit</button>
+                    </div>
+                    <div class="control">
+                        <button class="button is-text" onclick="clearForm(this)" id="cancelMessage" disabled>Reset</button>
+                    </div>
+                </div>
+            </form>
+
         </div>
     </div>
-
 </section>

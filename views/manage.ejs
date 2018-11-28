@@ -1,0 +1,41 @@
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                <%= guild.name %> Settings
+            </h1>
+            <h2 class="subtitle">
+                View and manage the settings for
+                <%= guild.name %>.
+            </h2>
+        </div>
+    </div>
+</section>
+<section>
+    <nav class="level is-mobile">
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Members</p>
+                <p class="title"><%= guild.memberCount.toLocaleString() %></p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Text Channels</p>
+                <p class="title"><%= guild.channels.filter(c => c.type === 'text').size %></p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Voice Channels</p>
+                <p class="title"><%= guild.channels.filter(c => c.type === 'voice').size %></p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Categories</p>
+                <p class="title"><%= guild.channels.filter(c => c.type === 'category').size %></p>
+            </div>
+        </div>
+    </nav>
+</section>

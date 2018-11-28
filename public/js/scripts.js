@@ -1,43 +1,5 @@
-function submitForm() {
-    let name = document.getElementById('myName').value;
-    let username = document.getElementById('myUsername').value;
-    let email = document.getElementById('myEmail').value;
-    let subject = document.getElementById('mySubject').selectedOptions[0].value;
-    let message = document.getElementById('myMessage').value;
-
-    const newMessage = {
-        name: name,
-        username: username,
-        email: email,
-        subject: subject,
-        message: message
-    };
-    console.log(newMessage);
-}
-
-// load navbar, header, and footer html files
-function includeHTML() {
-    let z, i, elmnt, file, xhttp;
-    z = document.getElementsByTagName('*');
-    for (i = 0; i < z.length; i++) {
-        elmnt = z[i];
-        file = elmnt.getAttribute('include-html');
-        if (file) {
-            xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState === 4) {
-                    if (this.status === 200) elmnt.innerHTML = this.responseText;
-                    if (this.status === 404) elmnt.innerHTML = 'Page not found.';
-
-                    elmnt.removeAttribute('include-html');
-                    includeHTML();
-                }
-            }
-            xhttp.open('GET', file, true);
-            xhttp.send();
-            return;
-        }
-    }
+function clearForm(form) {
+    form.reset();
 }
 
 // Add mobile responsive for toggling the navbar
@@ -64,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(handleNavBar, 100);
 });
 
+// used to select tabs on /profile
 function openTab(evt, tabName) {
     let i, x, tabLinks;
 
@@ -76,3 +39,127 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += ' is-active';
 }
+
+// handle message sending to discord channels
+// find out why line 64 errors if not in the async function I created starting at
+// at next line
+(async () => {
+    let newDCMessage = document.getElementById('sendMessageForm');
+    if (!newDCMessage) return;
+    newDCMessage.addEventListener('submit', (e) => {
+
+        e.preventDefault();
+
+        let data = new FormData(newDCMessage);
+        data = {
+            channel: data.get('channel'),
+            message: data.get('message')
+        };
+
+        (async () => {
+            await fetch('/newmessage', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+        })();
+
+        clearForm(newDCMessage);
+    }, false);
+})();
+
+(async () => {
+    let newDCEmbed = document.getElementById('sendEmbedForm');
+    if (!newDCEmbed) return;
+    newDCEmbed.addEventListener('submit', (e) => {
+
+        e.preventDefault();
+
+        let data = new FormData(newDCEmbed);
+        data = {
+            channel: data.get('channel'),
+            message: data.get('message'),
+            embed: true
+        };
+
+        (async () => {
+            await fetch('/newmessage', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+        })();
+
+        clearForm(newDCEmbed);
+    }, false);
+})();
+
+(async () => {
+    let newDCEmbedEdit = document.getElementById('editEmbed');
+    if (!newDCEmbedEdit) return;
+    newDCEmbedEdit.addEventListener('submit', (e) => {
+
+        e.preventDefault();
+
+        let data = new FormData(newDCEmbedEdit);
+        data = {
+            channel: data.get('channel'),
+            message: data.get('message'),
+            id: data.get('id'),
+            embed: true,
+            edit: true
+        };
+
+        (async () => {
+            await fetch('/newmessage', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+        })();
+
+        clearForm(newDCEmbedEdit);
+    }, false);
+})();
+
+(async () => {
+    let newContactMessage = document.getElementById('contactForm');
+    if (!newContactMessage) return;
+    newContactMessage.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        let data = new FormData(newContactMessage);
+        data = {
+            name: data.get('name'),
+            username: data.get('username'),
+            email: data.get('email'),
+            subject: data.get('subject'),
+            message: data.get('message')
+        };
+
+        (async () => {
+            await fetch('/newcontact', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+        })();
+
+        clearForm(newContactMessage);
+        alert('Your message has been sent. Thanks!');
+    });
+
+
+})();

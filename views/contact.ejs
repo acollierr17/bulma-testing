@@ -13,68 +13,70 @@
 </section>
 <section>
 
-    <div class="field">
-        <label class="label">Name</label>
-        <div class="control">
-            <input class="input" type="text" placeholder="John Doe" id="myName" disabled>
-        </div>
-    </div>
-
-    <div class="field">
-        <label class="label">Username</label>
-        <div class="control has-icons-left has-icons-right">
-            <input class="input is-success" type="text" placeholder="johndoe" id="myUsername" disabled>
-            <span class="icon is-small is-left">
-                <i class="fas fa-user"></i>
-            </span>
-            <span class="icon is-small is-right">
-                <i class="fas fa-check"></i>
-            </span>
-        </div>
-        <p class="help is-success">This username is available</p>
-    </div>
-
-    <div class="field">
-        <label class="label">Email</label>
-        <div class="control has-icons-left has-icons-right">
-            <input class="input is-danger" type="email" placeholder="john.doe@example.com" id="myEmail" disabled>
-            <span class="icon is-small is-left">
-                <i class="fas fa-envelope"></i>
-            </span>
-            <span class="icon is-small is-right">
-                <i class="fas fa-exclamation-triangle"></i>
-            </span>
-        </div>
-        <p class="help is-danger">This email is invalid</p>
-    </div>
-
-    <div class="field">
-        <label class="label">Subject</label>
-        <div class="control">
-            <div class="select">
-                <select id="mySubject" disabled>
-                    <option>Video Idea</option>
-                    <option>Business Inquery</option>
-                    <option>Miscellaneous</option>
-                </select>
+    <form id="contactForm">
+        <div class="field">
+            <label class="label">Name</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="John Doe" name="name">
             </div>
         </div>
-    </div>
 
-    <div class="field">
-        <label class="label">Message</label>
-        <div class="control">
-            <textarea class="textarea" placeholder="What do you wish to say?" id="myMessage" disabled></textarea>
+        <div class="field">
+            <label class="label">Username</label>
+            <div class="control has-icons-left has-icons-right">
+                <input class="input is-success" type="text" placeholder="johndoe" name="username">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                </span>
+                <span class="icon is-small is-right">
+                    <i class="fas fa-check"></i>
+                </span>
+            </div>
+            <p class="help is-success">This username is available</p>
         </div>
-    </div>
 
-    <div class="field is-grouped">
-        <div class="control">
-            <button class="button is-link" onclick="submitForm()" disabled>Submit</button>
+        <div class="field">
+            <label class="label">Email</label>
+            <div class="control has-icons-left has-icons-right">
+                <input class="input is-danger" type="email" placeholder="john.doe@example.com" name="email">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-envelope"></i>
+                </span>
+                <span class="icon is-small is-right">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </span>
+            </div>
+            <p class="help is-danger">This email is invalid</p>
         </div>
-        <div class="control">
-            <button class="button is-text" onclick="cancelForm()" disabled>Cancel</button>
+
+        <div class="field">
+            <label class="label">Subject</label>
+            <div class="control">
+                <div class="select">
+                    <select name="subject">
+                        <option>Video Idea</option>
+                        <option>Business Inquery</option>
+                        <option>Miscellaneous</option>
+                    </select>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <div class="field">
+            <label class="label">Message</label>
+            <div class="control">
+                <textarea class="textarea" placeholder="What do you wish to say?" name="message"></textarea>
+            </div>
+        </div>
+
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-link">Submit</button>
+            </div>
+            <div class="control">
+                <button class="button is-text">Cancel</button>
+            </div>
+        </div>
+    </form>
 
 </section>

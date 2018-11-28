@@ -1,7 +1,10 @@
 const express = require('express');
+const { body, validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
 const passport = require('passport');
 const refresh = require('passport-oauth2-refresh');
 const { Strategy } = require('passport-discord');
+const { Permissions, RichEmbed } = require('discord.js');
 require('dotenv-flow').config();
 
 const router = express.Router();
@@ -61,13 +64,134 @@ router.get('/profile', checkAuth, (req, res, next) => {
         title: resData(req.user).username,
         data: resData(req.user),
         avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`,
-        client
+        client,
+        perms: Permissions
     });
 });
 
-// router.get('/beta', (req, res, next) => {
-//     console.log(client.channels.size);
-// });
+router.get('/manage', checkAuth, (req, res, next) => {
+    res.redirect('/profile');
+});
+
+router.get('/manage/:guildID', checkAuth, (req, res, next) => {
+
+    const guild = client.guilds.get(req.params.guildID);
+    if (!guild) return res.status(404);
+    const isManaged = guild && !!guild.member(req.user.id) ? guild.member(req.user.id).permissions.has('MANAGE_GUILD') : false;
+    if (!isManaged) res.redirect('/profile');
+    res.render('manage', {
+        title: guild.name,
+        data: resData(req.user),
+        client,
+        guild
+    });
+
+});
+
+router.post('/newmessage', checkAuth, //[
+
+    // body('message')
+    //     .not().isEmpty()
+    //     .trim()
+    //     .escape(),
+    // sanitizeBody('notifyOnReply').toBoolean()
+/*]*,*/ (req, res, next) => {
+
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) return console.log({ errors: errors.array() });
+
+    if (!req.body.embed) {
+        let data = {
+            channel: req.body.channel,
+            message: req.body.message,
+        };
+    
+        let dChannel = client.channels.find(c => c.name === data.channel);
+        if (!dChannel) return;
+        try {
+            return dChannel.send(data.message);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    if (req.body.embed && !req.body.edit) {
+
+        let embedData = {
+            channel: req.body.channel,
+            message: req.body.message
+        }
+
+        let embed = new RichEmbed()
+            .setTitle('New Message')
+            .setDescription(embedData.message)
+            .setColor(0xdd9323);
+
+        try {
+            return client.channels.find(c => c.name === embedData.channel).send(embed);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    if (req.body.embed && req.body.edit) {
+
+        let embedData = {
+            channel: req.body.channel,
+            id: req.body.id,
+            message: req.body.message,
+        }
+
+        let c = client.channels.find(c => c.name === embedData.channel);
+        (async () => {
+
+            let fetched = await c.fetchMessage(embedData.id);
+
+            let embed = fetched.embeds[0];
+            if (!embed) return;
+
+            const newEmbed = new RichEmbed(embed)
+                .setDescription(embedData.message);
+
+            if (embedData.id === fetched.id) {
+                try {
+                    fetched.edit(newEmbed);
+                } catch (e) {
+                    console.log(e.stack);
+                }
+            }
+        })();
+    }
+
+});
+
+router.post('/newcontact', (req, res, next) => {
+
+    let data = {
+        name: req.body.name,
+        username: req.body.username,
+        email: req.body.email,
+        subject: req.body.message,
+        message: req.body.message
+    };
+
+    let channel = client.channels.get('517173600151797760');
+    let newMessage = new RichEmbed()
+        .setDescription('New Message')
+        .setColor(0xdd9323)
+        .addField('Name', data.name, true)
+        .addField('Username', data.username, true)
+        .addField('Email', data.email, true)
+        .addField('Subject', data.subject, true)
+        .addField('Message', data.message)
+        .setTimestamp();
+    try {
+        channel.send(newMessage);
+    } catch (e) {
+        console.log(e);        
+    }
+
+});
 
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
