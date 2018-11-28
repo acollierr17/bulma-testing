@@ -61,9 +61,9 @@ router.get('/logout', (req, res, next) => {
 router.get('/profile', checkAuth, (req, res, next) => {
 
     res.render('profile', {
-        title: resData(req.user).username,
-        data: resData(req.user),
-        avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`,
+        title: req.user.username,
+        data: req.user,
+        avatarURL: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`,
         client,
         perms: Permissions
     });
@@ -81,7 +81,7 @@ router.get('/manage/:guildID', checkAuth, (req, res, next) => {
     if (!isManaged) res.redirect('/profile');
     res.render('manage', {
         title: guild.name,
-        data: resData(req.user),
+        data: req.user,
         client,
         guild
     });
@@ -196,17 +196,6 @@ router.post('/newcontact', (req, res, next) => {
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
     res.redirect('/?authorized=false');
-}
-
-function resData(user) {
-    return data = {
-        id: user.id,
-        username: user.username,
-        discriminator: user.discriminator,
-        avatar: user.avatar,
-        verified: user.verified,
-        guilds: user.guilds
-    };
 }
 
 module.exports = router;
