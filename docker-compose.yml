@@ -1,6 +1,6 @@
 version: '3'
 services:
-    discord:
+    nodejs:
       container_name: bulma-testing
       ports:
         - "8080:8080"
