@@ -53,17 +53,18 @@
 
     <div class="container section">
         <div class="content-tab" id="Guilds">
-            <% data.guilds.forEach(g => {
+            <% data.guilds.forEach(g => { %>
+                
+            <%
                 const permsOnGuild = new perms(g.permissions);
                 if (!permsOnGuild.has('MANAGE_GUILD')) return;
-                if (!g) return;
             %>
             <div class="card">
                 <div class="card-content">
                     <div class="media">
                         <div class="media-left">
                             <figure class="image is-72x72">
-                                <img class="is-rounded guild-icon-profile" src="https://cdn.discordapp.com/icons/<%= g.id %>/<%= g.icon%>.png"
+                                <img class="is-rounded guild-icon-profile" src="<%= `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png` %>"
                                     alt="<%= g.name %>'s guild icon">
                             </figure>
                         </div>
@@ -102,7 +103,7 @@
                                         <li><a href="<%= href %>" class="button is-primary">
                                                 <%= text %></a></li>
                                     <% } else if (data.id !== client.appInfo.owner.id && client.guilds.get(g.id)) { %>
-                                        <li><a href="<% href %>" class="button is-primary">
+                                        <li><a href="<%= href %>" class="button is-primary">
                                                 <%= text %></a></li>
                                     <% } else { %>
                                         <li><a class="button is-primary" disabled>
