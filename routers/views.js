@@ -7,16 +7,14 @@ router.get('/', (req, res, next) => {
 
     res.render('index', {
         title: 'Bulma Testing',
-        data: req.user || false,
-        avatarURL: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`
+        data: req.user || false
     });
 });
 
 router.get('/contact', (req, res, next) => {
     res.render('contact', {
         title: 'Contact',
-        data: req.user || false,
-        avatarURL: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`
+        data: req.user || false
     });
 });
 
