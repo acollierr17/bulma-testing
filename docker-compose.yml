@@ -2,6 +2,8 @@ version: '3'
 services:
     discord:
       container_name: bulma-testing
+      ports:
+        - "8080:8080"
       build:
         context: .
         dockerfile: ./Dockerfile
