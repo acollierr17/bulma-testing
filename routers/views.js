@@ -7,33 +7,22 @@ router.get('/', (req, res, next) => {
 
     res.render('index', {
         title: 'Bulma Testing',
-        data: resData(req.user || false),
-        avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`
+        data: req.user || false,
+        avatarURL: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`
     });
 });
 
 router.get('/contact', (req, res, next) => {
     res.render('contact', {
         title: 'Contact',
-        data: resData(req.user || false),
-        avatarURL: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`
+        data: req.user || false,
+        avatarURL: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`
     });
 });
 
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
     res.send('not logged in :(');
-}
-
-function resData(user) {
-    return data = {
-        id: user.id,
-        username: user.username,
-        discriminator: user.discriminator,
-        avatar: user.avatar,
-        verified: user.verified,
-        guilds: user.guilds
-    };
 }
 
 module.exports = router;
