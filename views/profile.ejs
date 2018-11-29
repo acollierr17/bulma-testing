@@ -56,6 +56,7 @@
             <% data.guilds.forEach(g => {
                 const permsOnGuild = new perms(g.permissions);
                 if (!permsOnGuild.has('MANAGE_GUILD')) return;
+                if (!g) return;
             %>
             <div class="card">
                 <div class="card-content">

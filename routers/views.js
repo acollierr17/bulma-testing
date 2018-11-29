@@ -20,14 +20,6 @@ router.get('/contact', (req, res, next) => {
     });
 });
 
-router.get('/beta', checkAuth, (req, res, next) => {
-    let guilds = [];
-    req.user.guilds.forEach(g => {
-        guilds.push(`${g.name} - ${g.id}`);
-    });
-    res.status(200).send(guilds);
-});
-
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
     res.send('not logged in :(');
