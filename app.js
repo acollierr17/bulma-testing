@@ -64,12 +64,12 @@ app.use((err, req, res, next) => {
         case 'NoCodeProvided':
             return res.status(400).send({
                 status: 'ERROR',
-                error: err.message
+                error: err.stack
             });
         default:
             return res.status(500).send({
                 status: 'ERROR',
-                error: err.message
+                error: err.stack
             });
     }
 });
