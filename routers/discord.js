@@ -67,6 +67,7 @@ router.get('/profile', checkAuth, (req, res, next) => {
         client,
         perms: Permissions
     });
+
 });
 
 router.get('/manage', checkAuth, (req, res, next) => {
