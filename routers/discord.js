@@ -5,6 +5,7 @@ const passport = require('passport');
 const refresh = require('passport-oauth2-refresh');
 const { Strategy } = require('passport-discord');
 const { Permissions, RichEmbed } = require('discord.js');
+const fetch = require('node-fetch');
 require('dotenv-flow').config();
 
 const router = express.Router();
@@ -64,11 +65,63 @@ router.get('/profile', checkAuth, (req, res, next) => {
         title: req.user.username,
         data: req.user,
         avatarURL: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`,
-        client,
+        client: getAppInfo(),
         perms: Permissions
     });
 
 });
+
+// router.get('/beta', checkAuth, (req, res, next) => {
+//     res.status(200);
+
+//     (async () => {
+
+//         let appInfo = await fetch('https://discordapp.com/api/oauth2/applications/@me', {
+//             method: 'GET',
+//             headers: {
+//                 Authorization: `Bot ${process.env.CLIENT_TOKEN}`
+//             }
+//         }).then(response => {
+//             if (response.statusCode === 404) {
+//                 return res.status(404).json({
+//                     status: res.statusCode,
+//                     error: 'Could not get bot application information.'
+//                 });
+//             } else {
+//                 return response.json();
+//             }
+//         });
+//     })();
+// });
+
+// router.get('/beta/:guildID', (req, res, next) => {
+
+//     const guildID = req.params.guildID;
+//     (async () => {
+
+//         let guild = await fetch(`http://localhost:3000/api/v1/guild/${guildID}`, {
+//             method: 'GET',
+//             headers: {
+//                 'Content-type': 'application/json'
+//             }
+//         }).then(response => {
+
+//                 if (response.statusCode === 404) {
+//                     return res.status(404).json({
+//                         status: res.statusCode,
+//                         error: 'This guild does exist or is inaccessible!'
+//                     });
+//                 }
+//                 return response.json();
+//             });
+
+//         res.status(200).json({
+//             status: guild.status,
+//             guildName: guild.guildName,
+//             memberCount: guild.memberCount
+//         });
+//     })();
+// });
 
 router.get('/manage', checkAuth, (req, res, next) => {
     res.redirect('/profile');
@@ -197,6 +250,27 @@ router.post('/newcontact', (req, res, next) => {
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
     res.redirect('/?authorized=false');
+}
+
+async function getAppInfo() {
+
+    let appInfo = await fetch('https://discordapp.com/api/oauth2/applications/@me', {
+        method: 'GET',
+        headers: {
+            Authorization: `Bot ${process.env.CLIENT_TOKEN}`
+        }
+    }).then(response => {
+        if (response.statusCode === 404) {
+            return res.status(404).json({
+                status: res.statusCode,
+                error: 'Could not get bot application information.'
+            });
+        } else {
+            return response.json();
+        }
+    });
+
+    return appInfo;
 }
 
 module.exports = router;
