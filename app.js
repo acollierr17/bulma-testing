@@ -10,7 +10,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
-const { Views, Discord } = require('./routers');
+const { Views, Discord, Messages } = require('./routers');
 require('dotenv-flow').config();
 
 const dbOptions = {
@@ -55,6 +55,7 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 app.set('views', path.join(__dirname, '/views'));
 app.use('/', Views);
 app.use('/', Discord);
+app.use('/', Messages);
 
 app.use((err, req, res, next) => {
     switch (err.message) {

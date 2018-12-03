@@ -1,0 +1,79 @@
+<section class="hero is-primary">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        Messages
+      </h1>
+      <h2 class="subtitle">
+        Interact with the community and send a message for others to see!
+        <p><em>Currently under construction.</em></p>
+      </h2>
+    </div>
+  </div>
+</section>
+<section class="messagesPage">
+
+  <a class="button is-large is-info is-outlined is-fullwidth" onclick="toggleSubmission()">Toggle Submission Form</a>
+  <br />
+  <form id="newMessageForm" style="display: none;">
+
+    <div class="field">
+      <label class="label">Message</label>
+      <div class="control">
+        <textarea class="textarea" name="message"></textarea>
+      </div>
+    </div>
+
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-link">Submit</button>
+      </div>
+    </div>
+  </form>
+  <br />
+  <div class="columns is-multiline is-4">
+    <% messages.forEach(m => { %>
+    <div class="column is-4">
+      <div class="card" id="messageCard-<%= m.messageID %>">
+        <div class="card-content">
+          <p class="title">
+            <%= m.message %>
+          </p>
+          <p class="subtitle">
+            <figure class="image is-24x24 is-inline-flex">
+              <img class="is-rounded" src="<%= `https://cdn.discordapp.com/avatars/${m.userID}/${m.userAvatar}.png` %>"
+                alt="<%= m.userName %>'s avatar">
+
+              <%= m.userName %>
+            </figure>
+          </p>
+        </div>
+
+        <% if (data.id === m.userID) { %>
+        <footer class="card-footer">
+          <a class="card-footer-item">Edit</a>
+          <a class="card-footer-item" id="deleteMessage" onclick="deleteMessage('<%= m.messageID %>')">Delete</a>
+        </footer>
+        <% } else { %>
+          <footer class="card-footer"></footer>
+        <% } %>
+
+      </div>
+    </div>
+    <% }); %>
+</section>
+
+<style>
+  .card {
+    height: 100%;
+  }
+
+  .title {
+    padding-bottom: 3px;
+  }
+
+  .img,
+  .is-rounded {
+    margin-right: 5px;
+  }
+</style>

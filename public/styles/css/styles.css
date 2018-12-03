@@ -6767,5 +6767,5 @@ ul, .profile-bot-manage {
 li, .profile-bot-manage {
   display: inline; }
 
-#contactForm, .indexPage {
-  padding: 15px; }
+#contactForm, .indexPage, .messagesPage {
+  padding: 15px !important; }

@@ -1,3 +1,4 @@
+// Simplify clearing of forms
 function clearForm(form) {
     form.reset();
 }
@@ -71,6 +72,7 @@ function openTab(evt, tabName) {
     }, false);
 })();
 
+// Send an embed in a guild text channel
 (async () => {
     let newDCEmbed = document.getElementById('sendEmbedForm');
     if (!newDCEmbed) return;
@@ -100,6 +102,7 @@ function openTab(evt, tabName) {
     }, false);
 })();
 
+// Edit an existing emebed in a guild text channel
 (async () => {
     let newDCEmbedEdit = document.getElementById('editEmbed');
     if (!newDCEmbedEdit) return;
@@ -131,6 +134,7 @@ function openTab(evt, tabName) {
     }, false);
 })();
 
+// Submit a new contact form
 (async () => {
     let newContactMessage = document.getElementById('contactForm');
     if (!newContactMessage) return;
@@ -163,3 +167,59 @@ function openTab(evt, tabName) {
 
 
 })();
+
+// Toggle the message submission form
+function toggleSubmission() {
+
+    let form = document.getElementById('newMessageForm');
+    if (form.style.display === 'none') form.style.display = 'block';
+    else form.style.display = 'none';
+
+}
+
+// Submit a new message to the message board.
+(async () => {
+
+    let newMessage = document.getElementById('newMessageForm');
+    if (!newMessage) return;
+    newMessage.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        let data = new FormData(newMessage);
+        data = {
+            message: data.get('message')
+        };
+
+        (async () => {
+            await fetch('/messages', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+        })();
+
+        clearForm(newMessage);
+        toggleSubmission();
+    });
+})();
+
+// Delete a message from the message board
+async function deleteMessage(id) {
+
+    let messageCard = document.getElementById(`messageCard-${id}`);
+    if (!messageCard) return;
+
+    (async () => {
+        await fetch(`/messages/${id}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json'
+            }
+        });
+    })();
+
+    messageCard.parentNode.removeChild(messageCard);
+}

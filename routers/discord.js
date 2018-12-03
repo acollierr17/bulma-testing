@@ -61,67 +61,17 @@ router.get('/logout', (req, res, next) => {
 
 router.get('/profile', checkAuth, (req, res, next) => {
 
-    res.render('profile', {
-        title: req.user.username,
-        data: req.user,
-        avatarURL: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`,
-        client: getAppInfo(),
-        perms: Permissions
-    });
+    // res.render('profile', {
+    //     title: req.user.username,
+    //     data: req.user,
+    //     avatarURL: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`,
+    //     client: getAppInfo(),
+    //     perms: Permissions
+    // });
+
+    res.json({ status: res.statusCode, message: 'Currently locked due to maintenance.' });
 
 });
-
-// router.get('/beta', checkAuth, (req, res, next) => {
-//     res.status(200);
-
-//     (async () => {
-
-//         let appInfo = await fetch('https://discordapp.com/api/oauth2/applications/@me', {
-//             method: 'GET',
-//             headers: {
-//                 Authorization: `Bot ${process.env.CLIENT_TOKEN}`
-//             }
-//         }).then(response => {
-//             if (response.statusCode === 404) {
-//                 return res.status(404).json({
-//                     status: res.statusCode,
-//                     error: 'Could not get bot application information.'
-//                 });
-//             } else {
-//                 return response.json();
-//             }
-//         });
-//     })();
-// });
-
-// router.get('/beta/:guildID', (req, res, next) => {
-
-//     const guildID = req.params.guildID;
-//     (async () => {
-
-//         let guild = await fetch(`http://localhost:3000/api/v1/guild/${guildID}`, {
-//             method: 'GET',
-//             headers: {
-//                 'Content-type': 'application/json'
-//             }
-//         }).then(response => {
-
-//                 if (response.statusCode === 404) {
-//                     return res.status(404).json({
-//                         status: res.statusCode,
-//                         error: 'This guild does exist or is inaccessible!'
-//                     });
-//                 }
-//                 return response.json();
-//             });
-
-//         res.status(200).json({
-//             status: guild.status,
-//             guildName: guild.guildName,
-//             memberCount: guild.memberCount
-//         });
-//     })();
-// });
 
 router.get('/manage', checkAuth, (req, res, next) => {
     res.redirect('/profile');
@@ -129,16 +79,18 @@ router.get('/manage', checkAuth, (req, res, next) => {
 
 router.get('/manage/:guildID', checkAuth, (req, res, next) => {
 
-    const guild = client.guilds.get(req.params.guildID);
-    if (!guild) return res.status(404);
-    const isManaged = guild && !!guild.member(req.user.id) ? guild.member(req.user.id).permissions.has('MANAGE_GUILD') : false;
-    if (!isManaged) res.redirect('/profile');
-    res.render('manage', {
-        title: guild.name,
-        data: req.user,
-        client,
-        guild
-    });
+    res.json({ status: res.statusCode, message: 'Currently locked due to maintenance.' });
+
+    // const guild = client.guilds.get(req.params.guildID);
+    // if (!guild) return res.status(404);
+    // const isManaged = guild && !!guild.member(req.user.id) ? guild.member(req.user.id).permissions.has('MANAGE_GUILD') : false;
+    // if (!isManaged) res.redirect('/profile');
+    // res.render('manage', {
+    //     title: guild.name,
+    //     data: req.user,
+    //     client,
+    //     guild
+    // });
 
 });
 
