@@ -49,7 +49,7 @@
           </p>
         </div>
 
-        <% if (data.id === m.userID) { %>
+        <% if (data && data.id === m.userID) { %>
         <footer class="card-footer">
           <a class="card-footer-item">Edit</a>
           <a class="card-footer-item" id="deleteMessage" onclick="deleteMessage('<%= m.messageID %>')">Delete</a>
