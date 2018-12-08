@@ -4,8 +4,9 @@ function clearForm(form) {
 }
 
 // Add mobile responsive for toggling the navbar
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', handleNavBarEvent);
 
+function handleNavBarEvent() {
     function handleNavBar() {
         const $navBarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // the reason I need to set a timeout is because the DOM isn't fully loaded
     // will probably find out a more efficient way of doing this(?)
     setTimeout(handleNavBar, 100);
-});
+}
 
 // used to select tabs on /profile
 function openTab(evt, tabName) {
@@ -42,8 +43,6 @@ function openTab(evt, tabName) {
 }
 
 // handle message sending to discord channels
-// find out why line 64 errors if not in the async function I created starting at
-// at next line
 (async () => {
     let newDCMessage = document.getElementById('sendMessageForm');
     if (!newDCMessage) return;
@@ -168,58 +167,162 @@ function openTab(evt, tabName) {
 
 })();
 
+let toggleBtn = document.getElementById('toggleSubmission');
+toggleBtn.addEventListener('click', toggleSubmission);
+
 // Toggle the message submission form
 function toggleSubmission() {
 
     let form = document.getElementById('newMessageForm');
-    if (form.style.display === 'none') form.style.display = 'block';
+    if (form.style.display === 'none') return form.style.display = 'block';
     else form.style.display = 'none';
-
 }
 
 // Submit a new message to the message board.
-(async () => {
+let newMessage = document.getElementById('newMessageForm');
+newMessage.addEventListener('submit', createMessage);
 
-    let newMessage = document.getElementById('newMessageForm');
-    if (!newMessage) return;
-    newMessage.addEventListener('submit', (e) => {
-        e.preventDefault();
+async function createMessage(e) {
 
-        let data = new FormData(newMessage);
-        data = {
-            message: data.get('message')
-        };
+    e.preventDefault();
 
-        (async () => {
-            await fetch('/messages', {
-                method: 'POST',
+    let data = new FormData(newMessage);
+    data = {
+        message: data.get('message')
+    };
+
+    await fetch('/messages', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    clearForm(newMessage);
+    toggleSubmission();
+    reloadBoard();
+}
+
+// Delete a message from the message board.
+let messages = document.getElementById('messagesList');
+messages.addEventListener('click', deleteMessage);
+
+function deleteMessage(e) {
+
+    if (e.target.textContent === 'Delete' && confirm('Are you sure?')) {
+        let id = getMessageID(e);
+        let message = e.target.parentElement.parentElement.parentElement;
+
+        fetch(`/messages/${id}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json'
+            }
+        })
+        .then(messages.removeChild(message))
+        .catch(console.error);
+    }
+}
+// Edit a message on the message board
+messages.addEventListener('click', editMessage, true);
+messages.addEventListener('submit', (e) => e.preventDefault());
+
+function editMessage(e) {
+
+    if (e.target.textContent === 'Edit') {
+
+        let id = getMessageID(e);
+
+        let editModal = document.getElementById('editModal');
+        editModal.className += ' is-active';
+
+        let editModalCard = document.querySelector('.modal-card');
+        editModalCard.addEventListener('click', (event) => {
+            if (event.target.classList.contains('delete')) {
+                return editModal.classList.remove('is-active');
+            }
+        }, false);
+
+        let footer = editModalCard.lastElementChild.children;
+        Array.from(footer).forEach(f => {
+
+            if (f.textContent === 'Cancel') {
+                return f.addEventListener('click', () => {
+                    editModal.classList.remove('is-active');
+                }, false);
+            }
+
+            if (f.textContent === 'Confirm edit') {
+                f.addEventListener('click', () => {
+                    let newMessageEdit = document.getElementById('editMessageForm');
+                    newMessageEdit.addEventListener('submit', editMessageAPI, false);
+                    editModal.classList.remove('is-active');
+                }, false);
+            }
+        });
+
+        // Submit message edit to API
+        async function editMessageAPI(e) {
+
+            e.preventDefault();
+
+            let newMessageEdit = document.getElementById('editMessageForm');
+            let data = new FormData(newMessageEdit);
+            data = {
+                message: data.get('message')
+            };
+
+            await fetch(`/messages/${id}/edit`, {
+                method: 'PATCH',
                 headers: {
                     'Accept': 'application/json',
                     'Content-type': 'application/json'
                 },
                 body: JSON.stringify(data)
             });
-        })();
 
-        clearForm(newMessage);
-        toggleSubmission();
-    });
-})();
+            reloadBoard();
+        }
+    }
+}
 
-// Delete a message from the message board
-async function deleteMessage(id) {
+// Toggle the edit modal
+function toggleModal() {
 
-    let messageCard = document.getElementById(`messageCard-${id}`);
-    if (!messageCard) return;
+    let form = document.getElementById('editModal');
+    if (form.style.display === 'none') form.style.display = 'block';
+    else form.style.display = 'none';
+}
 
-    (async () => {
-        await fetch(`/messages/${id}/delete`, {
-            method: 'DELETE',
-            headers: {
-                'Content-type': 'application/json'
-            }
-        });
-    })();
+// Reload the messages board
+function reloadBoard() {
+    let xhr = new XMLHttpRequest();
 
-    messageCard.parentNode.removeChild(messageCard);
+    xhr.onload = () => {
+        if (xhr.status === 200) document.body.innerHTML = xhr.responseText;
+    };
+
+    xhr.open('GET', '/messages', true);
+    include('/public/js/scripts.js');
+    handleNavBarEvent();
+    return xhr.send(null);
+}
+
+// Include the scripts.js file for updating message board
+function include(scriptURL) {
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', scriptURL);
+    xhr.onreadystatechange = () => {
+        if ((xhr.status === 200) && (xhr.readyState === 4)) eval(xhr.responseText);
+    };
+    xhr.send();
+}
+
+// Get the id of a message card
+function getMessageID(e) {
+    let message = e.target.parentElement.parentElement.parentElement;
+    let id = message.id.split('-');
+    return id = id[1];
 }

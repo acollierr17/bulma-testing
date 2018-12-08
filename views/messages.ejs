@@ -6,14 +6,16 @@
       </h1>
       <h2 class="subtitle">
         Interact with the community and send a message for others to see!
-        <p><em>Currently under construction.</em></p>
+      </h2>
+      <h2 class="subtitle">
+        <em>Currently under construction.</em>
       </h2>
     </div>
   </div>
 </section>
 <section class="messagesPage">
 
-  <a class="button is-large is-info is-outlined is-fullwidth" onclick="toggleSubmission()">Toggle Submission Form</a>
+  <a class="button is-large is-info is-outlined is-fullwidth" id="toggleSubmission">Toggle Submission Form</a>
   <br />
   <form id="newMessageForm" style="display: none;">
 
@@ -31,10 +33,10 @@
     </div>
   </form>
   <br />
-  <div class="columns is-multiline is-4">
+  <div class="columns is-multiline is-4" id="messagesList">
     <% messages.forEach(m => { %>
-    <div class="column is-4">
-      <div class="card" id="messageCard-<%= m.messageID %>">
+    <div class="column is-4" id="messageCard-<%= m.messageID %>">
+      <div class="card">
         <div class="card-content">
           <p class="title">
             <%= m.message %>
@@ -46,17 +48,42 @@
 
               <%= m.userName %>
             </figure>
+            <br />
+            <%= m.submittedOn %>
           </p>
         </div>
 
         <% if (data && data.id === m.userID) { %>
         <footer class="card-footer">
-          <a class="card-footer-item">Edit</a>
-          <a class="card-footer-item" id="deleteMessage" onclick="deleteMessage('<%= m.messageID %>')">Delete</a>
+          <a class="card-footer-item" id="editMessage">Edit</a>
+          <a class="card-footer-item" id="deleteMessage">Delete</a>
         </footer>
         <% } else { %>
-          <footer class="card-footer"></footer>
+        <footer class="card-footer"></footer>
         <% } %>
+
+        <form id="editMessageForm">
+          <div class="modal" id="editModal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title">Edit Message</p>
+                <button class="delete" aria-label="close"></button>
+              </header>
+              <section class="modal-card-body">
+                <div class="field">
+                  <div class="control">
+                    <textarea class="textarea" name="message"></textarea>
+                  </div>
+                </div>
+              </section>
+              <footer class="modal-card-foot">
+                <button class="button is-success">Confirm edit</button>
+                <button class="button">Cancel</button>
+              </footer>
+            </div>
+          </div>
+        </form>
 
       </div>
     </div>
@@ -75,5 +102,10 @@
   .img,
   .is-rounded {
     margin-right: 5px;
+  }
+
+  /* eventually move to styles file; wont worry about this rn */
+  .modal-card-body {
+    margin-bottom: 0em !important;
   }
 </style>

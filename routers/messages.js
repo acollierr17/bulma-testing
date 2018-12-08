@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get('/messages', async (req, res, next) => {
 
-    const messages = await Message.find({});
+    const messages = await Message.find({}).sort({ messageID: -1 });
 
     res.render('messages', { 
         title: 'Messages',
@@ -36,7 +36,7 @@ router.post('/messages', checkAuth, async (req, res, next) => {
             submittedOn: moment(new Date).format('MM/DD/YYYY HH:mm:ss')
         });
 
-        newMessage.save().then(console.log).catch(console.error);
+        newMessage.save().then(res => console.log('Message create:', res)).catch(console.error);
         res.redirect('/messages');
 
     } catch (err) {
@@ -53,16 +53,34 @@ router.delete('/messages/:messageID/delete', checkAuth, async (req, res, next) =
         if (!message) return res.status(404).json({ 
             status: res.statusCode, 
             message: `Could not find a message with the ID ${req.params.messageID}.`
-        })
+        });
 
         if (req.user.id === message.userID) {
-            await message.delete().then(console.log).catch(console.error);
+            message.delete().then(res => console.log('Message delete:', res)).catch(console.error);
         }
 
     } catch (err) {
         console.error(err);
     }
 
+});
+
+router.patch('/messages/:messageID/edit', checkAuth, async (req, res, next) => {
+    
+    try {
+
+        let message = await Message.findOne({ messageID: req.params.messageID });
+        if (!message) return res.status(404).json({ 
+            status: res.statusCode, 
+            message: `Could not find a message with the ID ${req.params.messageID}.`
+        });
+
+        if (req.user.id === message.userID) {
+            message.updateOne({ message: req.body.message }).then(res => console.log('Message edit:', res)).catch(console.error);
+        }
+    } catch (error) {
+        console.error(error);
+    }
 });
 
 function checkAuth(req, res, next) {
