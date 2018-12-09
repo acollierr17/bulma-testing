@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
+    "dev": "nodemon",
     "css-build": "node-sass --omit-source-map-url public/styles/sass/styles.scss public/styles/css/styles.css&&echo \"Finished building styles!\""
   },
   "repository": {

@@ -188,8 +188,10 @@ async function createMessage(e) {
 
     let data = new FormData(newMessage);
     data = {
-        message: data.get('message')
+        message: data.get('newMessage')
     };
+
+    if (data.message.length <= 0) return messageValidation();
 
     await fetch('/messages', {
         method: 'POST',
@@ -226,8 +228,8 @@ function deleteMessage(e) {
     }
 }
 // Edit a message on the message board
-messages.addEventListener('click', editMessage, true);
-messages.addEventListener('submit', (e) => e.preventDefault());
+messages.addEventListener('click', editMessage, false);
+messages.addEventListener('submit', (e) => e.preventDefault(), false);
 
 function editMessage(e) {
 
@@ -264,6 +266,11 @@ function editMessage(e) {
         });
 
         // Submit message edit to API
+        // this functions works really weird
+            // a) fetch method must be wrapped in anonymous async function to work
+            // b) must load script again inside this function instead of the reloadBoard
+                // function
+        // need to further look into this in general
         async function editMessageAPI(e) {
 
             e.preventDefault();
@@ -274,16 +281,22 @@ function editMessage(e) {
                 message: data.get('message')
             };
 
-            await fetch(`/messages/${id}/edit`, {
-                method: 'PATCH',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
+            // implement same validation specific to edit form
+            // if (data.message.length <= 0) return messageValidation();
+
+            (async () => {
+                await fetch(`/messages/${id}/edit`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+            })();
 
             reloadBoard();
+            include('/public/js/scripts.js');
         }
     }
 }
@@ -300,14 +313,14 @@ function toggleModal() {
 function reloadBoard() {
     let xhr = new XMLHttpRequest();
 
-    xhr.onload = () => {
+    xhr.onload = async () => {
         if (xhr.status === 200) document.body.innerHTML = xhr.responseText;
     };
 
     xhr.open('GET', '/messages', true);
     include('/public/js/scripts.js');
     handleNavBarEvent();
-    return xhr.send(null);
+    xhr.send(null);
 }
 
 // Include the scripts.js file for updating message board
@@ -325,4 +338,13 @@ function getMessageID(e) {
     let message = e.target.parentElement.parentElement.parentElement;
     let id = message.id.split('-');
     return id = id[1];
+}
+
+// Display error message under submission box if message is empty (for client side validation)
+let errorDiv = document.getElementById('emptyMessage');
+let textArea = document.getElementsByName('newMessage');
+
+function messageValidation() {
+    textArea[0].classList.add('is-danger');
+    return errorDiv.style.display = 'block';
 }

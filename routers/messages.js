@@ -1,6 +1,7 @@
 const express = require('express');
 const moment = require('moment');
 const mongoose = require('mongoose');
+const { check, validationResult } = require('express-validator/check');
 const Message = require('../models/messages');
 require('dotenv-flow').config();
 require('moment-timezone');
@@ -19,19 +20,32 @@ router.get('/messages', async (req, res, next) => {
     
 });
 
-router.post('/messages', checkAuth, async (req, res, next) => {
+router.post('/messages', [
+    check('message').isLength({ min: 1 })
+], checkAuth, async (req, res, next) => {
 
     try {
 
+        // look into better implementing server-side validation
+        // this should do for now
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+
         let messages = await Message.find({});
         messages = messages.length;
+
+        let data = {
+            message: req.body.message
+        };
 
         const newMessage = await new Message({
             _id: mongoose.Types.ObjectId(),
             userID: req.user.id,
             userName: `${req.user.username}#${req.user.discriminator}`,
             userAvatar: req.user.avatar,
-            message: req.body.message,
+            message: data.message,
             messageID: messages + 1,
             submittedOn: moment(new Date).format('MM/DD/YYYY HH:mm:ss')
         });
@@ -40,7 +54,7 @@ router.post('/messages', checkAuth, async (req, res, next) => {
         res.redirect('/messages');
 
     } catch (err) {
-        console.error(err)
+        console.error(err);
     }
 
 });
